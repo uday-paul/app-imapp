@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/device.dart';
 import '../models/room.dart';
-
+/*
 class DeviceProvider extends ChangeNotifier {
   final List<Device> _devices = [];
   final List<Room> _rooms = [];
@@ -28,3 +28,4 @@ class DeviceProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+ */

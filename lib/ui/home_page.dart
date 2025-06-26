@@ -50,6 +50,18 @@ class _HomePageState extends State<HomePage> {
           final json = Map<String, dynamic>.from(jsonDecode(line));
           if (json.containsKey("id") && json.containsKey("status")) {
             // provider.updateStatus(json['id'], json['status'] == "on");
+            final int id = json['id'];
+            final bool newStatus = json['status'] == "on";
+
+            setState(() {
+              devices = List<Device>.from(devices.map((d) {
+                if (d.id == id) {
+                  return d.copyWith(status: newStatus);
+                } else {
+                  return d;
+                }
+              }));
+            });
           }
         }
       });
@@ -57,6 +69,22 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       setState(() => loading = false);
       print("Error: $e");
+    }
+  }
+
+  void sendCommand(Map<String, dynamic> cmd) {
+    tcp.sendCommand(cmd);
+
+    // Optional optimistic UI update
+    if (cmd.containsKey("id") && cmd.containsKey("action")) {
+      final int id = cmd["id"];
+      final bool newStatus = cmd["action"] == "on";
+      setState(() {
+        final index = devices.indexWhere((d) => d.id == id);
+        if (index != -1) {
+          devices[index] = devices[index].copyWith(status: newStatus);
+        }
+      });
     }
   }
 
@@ -79,7 +107,7 @@ class _HomePageState extends State<HomePage> {
             title: Text(room.name),
             children: roomDevices.map((device) => DeviceWidget(
               device: device,
-              onSend: (cmd) => tcp.sendCommand(cmd),
+              onSend: (cmd) => sendCommand(cmd),//tcp.sendCommand(cmd),
             )).toList(),
           );
         }).toList(),

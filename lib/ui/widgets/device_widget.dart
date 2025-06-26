@@ -41,7 +41,6 @@ class _SwitchDeviceState extends State<_SwitchDevice> {
   bool state = false;
 
   void toggleSwitch(bool value) {
-    setState(() => state = value);
     widget.onSend({
       "command": "toggle",
       "id": widget.device.id,
@@ -53,7 +52,7 @@ class _SwitchDeviceState extends State<_SwitchDevice> {
   Widget build(BuildContext context) {
     return SwitchListTile(
       title: Text(widget.device.name),
-      value: state,
+      value: widget.device.status,
       onChanged: toggleSwitch,
     );
   }

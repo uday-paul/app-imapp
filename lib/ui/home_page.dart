@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
       final mac = "54:32:04:01:03:78"; //await ApiService.fetchMacAddress();
       if (mac == null) throw Exception("MAC fetch failed");
 
-      await tcp.connect("server.digilux.co.in", 12345, mac);
+      await tcp.connect("digilux.local", 12345, mac);
       final json = await tcp.getDeviceInfo();
 
       setState(() {
@@ -61,6 +61,31 @@ class _HomePageState extends State<HomePage> {
                   return d;
                 }
               }));
+            });
+          }
+          // Case 2: Full/partial device + room update (without explicit command)
+          if (json.containsKey("devices") || json.containsKey("rooms")) {
+            final newDevices = (json["devices"] as List?)?.map((d) => Device.fromJson(d)).toList() ?? [];
+            final newRooms = (json["rooms"] as List?)?.map((r) => Room.fromJson(r)).toList() ?? [];
+
+            setState(() {
+              for (final dev in newDevices) {
+                final index = devices.indexWhere((d) => d.id == dev.id);
+                if (index == -1) {
+                  devices.add(dev);
+                } else {
+                  devices[index] = dev;
+                }
+              }
+
+              for (final room in newRooms) {
+                final index = rooms.indexWhere((r) => r.id == room.id);
+                if (index == -1) {
+                  rooms.add(room);
+                } else {
+                  rooms[index] = room;
+                }
+              }
             });
           }
         }

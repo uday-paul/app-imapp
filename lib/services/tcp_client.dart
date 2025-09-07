@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+typedef DeviceInfoCallback = void Function(Map<String, dynamic> data);
+typedef StatusCallback = void Function(bool connected);
+
 class TcpClient {
   late Socket _socket;
   late Stream<String> _lines;
